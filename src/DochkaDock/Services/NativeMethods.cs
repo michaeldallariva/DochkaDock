@@ -106,6 +106,40 @@ internal static class NativeMethods
         byte[] presbits, uint dwResSize, bool fIcon, uint dwVer,
         int cxDesired, int cyDesired, uint flags);
 
+    // ---- Remote Desktop awareness: the dock hides itself while its session ----
+    // ---- is being viewed over RDP, and reappears once it's local again    ----
+
+    // SM_REMOTESESSION: nonzero when the *current* session is right now being
+    // serviced by a Terminal Services (Remote Desktop) connection. This is a
+    // live, re-queryable state, not a one-time "was this process launched
+    // under RDP" fact — a session that started on the physical console flips
+    // to remote for as long as someone RDPs into that same machine, then
+    // flips back once they disconnect. Used only for the one-time check at
+    // startup; ongoing transitions are caught via WTSRegisterSessionNotification
+    // below instead of polling this.
+    public const int SM_REMOTESESSION = 0x1000;
+
+    [DllImport("user32.dll")]
+    public static extern int GetSystemMetrics(int nIndex);
+
+    // WM_WTSSESSION_CHANGE + the two state transitions RemoteSessionMonitorService
+    // cares about: WTS_REMOTE_CONNECT fires the instant this session starts being
+    // displayed over RDP (whether that's a brand-new RDP-only session or the
+    // physical console session getting taken over remotely); WTS_REMOTE_DISCONNECT
+    // fires when it goes back to being local-only. (WTS_CONSOLE_CONNECT/DISCONNECT
+    // and the logon/lock codes exist too but aren't "remote" transitions, so they're
+    // not declared here.)
+    public const int WM_WTSSESSION_CHANGE = 0x02B1;
+    public const int WTS_REMOTE_CONNECT = 0x3;
+    public const int WTS_REMOTE_DISCONNECT = 0x4;
+    public const uint NOTIFY_FOR_THIS_SESSION = 0;
+
+    [DllImport("wtsapi32.dll", SetLastError = true)]
+    public static extern bool WTSRegisterSessionNotification(IntPtr hWnd, uint dwFlags);
+
+    [DllImport("wtsapi32.dll", SetLastError = true)]
+    public static extern bool WTSUnRegisterSessionNotification(IntPtr hWnd);
+
     // ---- Auto-hide: cursor position + "is the foreground window maximized" ----
 
     [StructLayout(LayoutKind.Sequential)]

@@ -65,6 +65,26 @@ public partial class MainWindow : Window
     private const int MaxClipboardHistory = 20;
     private ClipboardMonitorService? _clipboardMonitor;
 
+    // Two independent reasons the dock must stay invisible, both resolving to
+    // the same Hide()/Show() call — independent of auto-hide, which slides
+    // the window off-screen via Top and never touches Visibility:
+    //  1. This session itself is being viewed over Remote Desktop (someone
+    //     RDP'd into this machine) — RemoteSessionMonitorService, live for
+    //     the session's whole lifetime since a session can flip between
+    //     local and remote.
+    //  2. A Remote Desktop client is focused on this machine (this machine
+    //     is the one doing the RDP'ing) — otherwise this machine's own
+    //     always-on-top dock bleeds on top of whatever remote desktop is
+    //     being viewed, especially once that RDP window goes full-screen.
+    // Either reason alone must keep the dock hidden; only clearing both
+    // should bring it back, hence two separate flags feeding one combiner
+    // (UpdateRemoteDesktopVisibility) rather than each calling Hide()/Show()
+    // directly and potentially undoing the other's Hide().
+    private RemoteSessionMonitorService? _remoteSessionMonitor;
+    private bool _hiddenForRemoteSession;
+    private bool _hiddenForLocalRdpClientForeground;
+    private readonly DispatcherTimer _rdpForegroundTimer = new() { Interval = TimeSpan.FromMilliseconds(400) };
+
     public ObservableCollection<ShelfFileItem> ShelfFiles => _shelfFiles;
     public ObservableCollection<ClipboardHistoryItem> ClipboardHistory => _clipboardHistory;
 
@@ -88,6 +108,12 @@ public partial class MainWindow : Window
 
         _mediaSessionTimer.Tick += async (_, _) => _currentMediaSession = await _mediaSessionService.GetCurrentSessionAsync();
         _mediaSessionTimer.Start();
+
+        // Always runs, unlike auto-hide's timer — this isn't an opt-in
+        // feature, the dock must never bleed onto a Remote Desktop view
+        // regardless of the auto-hide setting.
+        _rdpForegroundTimer.Tick += RdpForegroundTimer_Tick;
+        _rdpForegroundTimer.Start();
     }
 
     /// <summary>Marks whichever item is currently the first Workspace in
@@ -210,6 +236,67 @@ public partial class MainWindow : Window
         // find WindowInteropHelper's Handle still zero.
         _clipboardMonitor = new ClipboardMonitorService(this);
         _clipboardMonitor.ClipboardChanged += OnClipboardChanged;
+
+        _remoteSessionMonitor = new RemoteSessionMonitorService(this);
+        _remoteSessionMonitor.RemoteSessionChanged += OnRemoteSessionChanged;
+        // Covers the case where the session is already remote by the time the
+        // dock launches (e.g. autostart firing inside a session that only
+        // ever exists as an RDP session) - the live hook above only reports
+        // *transitions*, not the state at the moment it was registered.
+        _hiddenForRemoteSession = RemoteSessionMonitorService.IsCurrentSessionRemote();
+        UpdateRemoteDesktopVisibility();
+    }
+
+    private void OnRemoteSessionChanged(bool isRemote)
+    {
+        _hiddenForRemoteSession = isRemote;
+        UpdateRemoteDesktopVisibility();
+    }
+
+    /// <summary>Polls at the same cadence regardless of auto-hide's setting
+    /// (this isn't optional behavior) for whether the foreground window
+    /// belongs to Windows' built-in Remote Desktop Connection client
+    /// (mstsc.exe) — covers both windowed and full-screen RDP sessions.
+    /// Doesn't recognize third-party or Microsoft Store Remote Desktop
+    /// clients (different process names) — a real, narrower gap, not a
+    /// design choice; mstsc.exe is what this was built and tested against.</summary>
+    private void RdpForegroundTimer_Tick(object? sender, EventArgs e)
+    {
+        var isRdpForeground = ForegroundWindowBelongsToRdpClient();
+        if (isRdpForeground == _hiddenForLocalRdpClientForeground) return;
+
+        _hiddenForLocalRdpClientForeground = isRdpForeground;
+        UpdateRemoteDesktopVisibility();
+    }
+
+    private static bool ForegroundWindowBelongsToRdpClient()
+    {
+        var hwnd = NativeMethods.GetForegroundWindow();
+        if (hwnd == IntPtr.Zero) return false;
+
+        NativeMethods.GetWindowThreadProcessId(hwnd, out var pid);
+        if (pid == 0) return false;
+
+        try
+        {
+            using var process = Process.GetProcessById((int)pid);
+            return process.ProcessName.Equals("mstsc", StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>Single combiner for both hide reasons above, so neither one's
+    /// Show() can undo the other's still-active Hide().</summary>
+    private void UpdateRemoteDesktopVisibility()
+    {
+        var shouldBeHidden = _hiddenForRemoteSession || _hiddenForLocalRdpClientForeground;
+        if (shouldBeHidden && Visibility == Visibility.Visible)
+            Hide();
+        else if (!shouldBeHidden && Visibility != Visibility.Visible)
+            Show();
     }
 
     private void OnClipboardChanged(ClipboardSnapshot snapshot)
@@ -222,6 +309,8 @@ public partial class MainWindow : Window
     protected override void OnClosed(EventArgs e)
     {
         _clipboardMonitor?.Dispose();
+        _remoteSessionMonitor?.Dispose();
+        _rdpForegroundTimer.Stop();
         base.OnClosed(e);
     }
 
