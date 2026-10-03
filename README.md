@@ -145,6 +145,21 @@ small, easy to inspect, and free of anything unrelated to what it actually does.
 - Media controls only work for apps that register themselves with Windows as a media
   source. Not every app does this.
 
+## Privacy
+
+DochkaDock does not collect any personal information or usage data, and there is no
+analytics or tracking of any kind. There is no account, no sign in, and no
+registration. It is completely free to use.
+
+The app makes no network or internet calls on its own. All of its features, including
+pinning apps, Drop Actions, Workspaces, the shelf, media controls, and the Recovery
+Toolkit, work entirely with files and Windows features already on your machine. The
+only network addresses anywhere in the app are the GitHub and license links in the
+About window, and those only open your web browser if you click them yourself.
+
+Your dock layout and settings stay in a single local file on your own machine, at
+`%AppData%\DochkaDock\config.json`. Nothing is ever sent anywhere.
+
 ## License
 
 DochkaDock is released under the PolyForm Noncommercial License 1.0.0. You are free to
