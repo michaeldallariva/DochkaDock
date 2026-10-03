@@ -8,6 +8,13 @@
   <img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue" alt="License: PolyForm Noncommercial 1.0.0">
 </p>
 
+<img width="1429" height="884" alt="Image" src="https://github.com/user-attachments/assets/e0385ec6-4927-4aea-b2d5-4671243f2313" />
+
+<img width="1352" height="346" alt="Image" src="https://github.com/user-attachments/assets/385a61ac-6832-4158-b536-628960be1833" />
+
+<img width="1332" height="175" alt="Image" src="https://github.com/user-attachments/assets/d6c977dc-c646-4580-9f65-057c822f1c15" />
+
+
 # DochkaDock
 
 DochkaDock is a macOS style dock for Windows 11. It is a floating pill of large icons
