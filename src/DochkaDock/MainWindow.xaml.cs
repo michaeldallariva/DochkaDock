@@ -66,23 +66,18 @@ public partial class MainWindow : Window
     private const int MaxClipboardHistory = 20;
     private ClipboardMonitorService? _clipboardMonitor;
 
-    // Two independent reasons the dock must stay invisible, both resolving to
-    // the same Hide()/Show() call — independent of auto-hide, which slides
-    // the window off-screen via Top and never touches Visibility:
-    //  1. This session itself is being viewed over Remote Desktop (someone
-    //     RDP'd into this machine) — RemoteSessionMonitorService, live for
-    //     the session's whole lifetime since a session can flip between
-    //     local and remote.
-    //  2. A Remote Desktop client is focused on this machine (this machine
-    //     is the one doing the RDP'ing) — otherwise this machine's own
-    //     always-on-top dock bleeds on top of whatever remote desktop is
-    //     being viewed, especially once that RDP window goes full-screen.
-    // Either reason alone must keep the dock hidden; only clearing both
-    // should bring it back, hence two separate flags feeding one combiner
-    // (UpdateRemoteDesktopVisibility) rather than each calling Hide()/Show()
-    // directly and potentially undoing the other's Hide().
-    private RemoteSessionMonitorService? _remoteSessionMonitor;
-    private bool _hiddenForRemoteSession;
+    // The dock hides itself whenever a Remote Desktop client has local focus
+    // on this machine (this machine is the one doing the RDP'ing) —
+    // independent of auto-hide, which slides the window off-screen via Top
+    // and never touches Visibility. Without this, this machine's own
+    // always-on-top dock bleeds on top of whatever remote desktop is being
+    // viewed (including that remote machine's own dock, if it runs
+    // DochkaDock too), especially once the RDP window goes full-screen.
+    // Deliberately does NOT hide just because *this* machine's own session
+    // happens to be the one being RDP'd into — a dock running on a machine
+    // that's routinely accessed remotely (e.g. a dev box) still needs to be
+    // visible by default there; it's only the viewing side's dock that ever
+    // needs to get out of the way.
     private bool _hiddenForLocalRdpClientForeground;
     private readonly DispatcherTimer _rdpForegroundTimer = new() { Interval = TimeSpan.FromMilliseconds(400) };
 
@@ -228,6 +223,8 @@ public partial class MainWindow : Window
 
     // ---- Window positioning --------------------------------------------
 
+    private HwndSourceHook? _displayChangeHook;
+
     private void RootWindow_Loaded(object sender, RoutedEventArgs e)
     {
         RepositionWindow();
@@ -235,23 +232,27 @@ public partial class MainWindow : Window
         // Needs the window's native HWND, which doesn't exist until about
         // now - constructing it any earlier (e.g. in the constructor) would
         // find WindowInteropHelper's Handle still zero.
+        var hwnd = new WindowInteropHelper(this).Handle;
+
+        // Re-centers live whenever the display resolution or this window's
+        // monitor DPI changes - not just a one-time startup calculation.
+        // Needed because an RDP session's virtual screen genuinely changes
+        // resolution/scaling as the session is moved between the client's
+        // physical monitors (or the RDP window is resized with dynamic
+        // resolution), which neither resizes nor DPI-changes the dock's own
+        // content, so nothing else here would otherwise trigger a reposition.
+        _displayChangeHook = DisplayChangeWndProc;
+        HwndSource.FromHwnd(hwnd)?.AddHook(_displayChangeHook);
+
         _clipboardMonitor = new ClipboardMonitorService(this);
         _clipboardMonitor.ClipboardChanged += OnClipboardChanged;
-
-        _remoteSessionMonitor = new RemoteSessionMonitorService(this);
-        _remoteSessionMonitor.RemoteSessionChanged += OnRemoteSessionChanged;
-        // Covers the case where the session is already remote by the time the
-        // dock launches (e.g. autostart firing inside a session that only
-        // ever exists as an RDP session) - the live hook above only reports
-        // *transitions*, not the state at the moment it was registered.
-        _hiddenForRemoteSession = RemoteSessionMonitorService.IsCurrentSessionRemote();
-        UpdateRemoteDesktopVisibility();
     }
 
-    private void OnRemoteSessionChanged(bool isRemote)
+    private IntPtr DisplayChangeWndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        _hiddenForRemoteSession = isRemote;
-        UpdateRemoteDesktopVisibility();
+        if (msg == NativeMethods.WM_DISPLAYCHANGE || msg == NativeMethods.WM_DPICHANGED)
+            RepositionWindow();
+        return IntPtr.Zero;
     }
 
     /// <summary>Polls at the same cadence regardless of auto-hide's setting
@@ -289,14 +290,11 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Single combiner for both hide reasons above, so neither one's
-    /// Show() can undo the other's still-active Hide().</summary>
     private void UpdateRemoteDesktopVisibility()
     {
-        var shouldBeHidden = _hiddenForRemoteSession || _hiddenForLocalRdpClientForeground;
-        if (shouldBeHidden && Visibility == Visibility.Visible)
+        if (_hiddenForLocalRdpClientForeground && Visibility == Visibility.Visible)
             Hide();
-        else if (!shouldBeHidden && Visibility != Visibility.Visible)
+        else if (!_hiddenForLocalRdpClientForeground && Visibility != Visibility.Visible)
             Show();
     }
 
@@ -309,8 +307,9 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        if (_displayChangeHook is not null)
+            HwndSource.FromHwnd(new WindowInteropHelper(this).Handle)?.RemoveHook(_displayChangeHook);
         _clipboardMonitor?.Dispose();
-        _remoteSessionMonitor?.Dispose();
         _rdpForegroundTimer.Stop();
         base.OnClosed(e);
     }
@@ -335,22 +334,29 @@ public partial class MainWindow : Window
     // formula only lives in one place.
     private double RestingTop => GetWorkAreaInDips().Bottom - VerticalGap - ActualHeight;
 
-    /// <summary>The dock's own monitor's work area, converted to WPF DIPs
-    /// using this window's actual current DPI scale — deliberately not
+    /// <summary>The dock's own monitor's work area, converted to the same
+    /// units as Window.Left/Top/ActualWidth/ActualHeight — deliberately not
     /// SystemParameters.WorkArea, which has a long-standing WPF bug: it's
     /// computed once using whichever monitor's DPI was active when the
     /// SystemParameters static class was first touched in the process, and
-    /// never refreshes after that. That's invisible as long as you stay on
-    /// one monitor at one scaling, but confirmed to visibly off-center the
-    /// dock after switching from a 2K display to a 1080p one (different
-    /// resolution/scaling) without relaunching — the window still centered
-    /// against the stale, wrong-DPI work area. MonitorFromWindow +
-    /// GetMonitorInfo (device pixels) + VisualTreeHelper.GetDpi (this
-    /// window's live, per-monitor DPI, correct under the app's
-    /// PerMonitorV2 manifest) are always current for whichever monitor the
-    /// dock is actually on. Falls back to SystemParameters.WorkArea only if
-    /// the native window handle doesn't exist yet (shouldn't happen by the
-    /// time this is called, but cheap to guard).</summary>
+    /// never refreshes after that. MonitorFromWindow + GetMonitorInfo
+    /// (device pixels) are always current for whichever monitor the dock is
+    /// actually on, fixing that staleness. The device-pixel -> WPF-unit
+    /// conversion is *measured*, not assumed: an earlier version divided by
+    /// VisualTreeHelper.GetDpi(this).DpiScaleX/Y on the theory that this
+    /// window's Left/Top/ActualWidth are true per-monitor DIPs, but that
+    /// visibly left-leaned the dock on a scaled (e.g. 125%/150%) display —
+    /// GetDpi's scale doesn't reliably match whatever unit Window.Left/Top
+    /// actually move in for this SizeToContent window (the auto-hide
+    /// hit-test below has always compared raw GetCursorPos pixels straight
+    /// against Left/ActualWidth with no DPI conversion at all, which only
+    /// coincidentally looked right at 100% scale). Comparing this window's
+    /// own native GetWindowRect (always true physical pixels) against its
+    /// ActualWidth/ActualHeight gives the real current ratio between the
+    /// two unit systems, whatever it actually is, so this stays correct
+    /// without having to know why. Falls back to no scaling (and to
+    /// SystemParameters.WorkArea if the native window handle or monitor
+    /// lookup isn't available yet) rather than guessing.</summary>
     private Rect GetWorkAreaInDips()
     {
         var hwnd = new WindowInteropHelper(this).Handle;
@@ -362,13 +368,24 @@ public partial class MainWindow : Window
         if (!NativeMethods.GetMonitorInfo(monitor, ref info))
             return SystemParameters.WorkArea;
 
-        var dpi = VisualTreeHelper.GetDpi(this);
+        double scaleX = 1, scaleY = 1;
+        if (ActualWidth > 0 && ActualHeight > 0 && NativeMethods.GetWindowRect(hwnd, out var physical))
+        {
+            var physicalWidth = physical.Right - physical.Left;
+            var physicalHeight = physical.Bottom - physical.Top;
+            if (physicalWidth > 0 && physicalHeight > 0)
+            {
+                scaleX = physicalWidth / ActualWidth;
+                scaleY = physicalHeight / ActualHeight;
+            }
+        }
+
         var work = info.rcWork;
         return new Rect(
-            work.Left / dpi.DpiScaleX,
-            work.Top / dpi.DpiScaleY,
-            (work.Right - work.Left) / dpi.DpiScaleX,
-            (work.Bottom - work.Top) / dpi.DpiScaleY);
+            work.Left / scaleX,
+            work.Top / scaleY,
+            (work.Right - work.Left) / scaleX,
+            (work.Bottom - work.Top) / scaleY);
     }
 
     // ---- Auto-hide -------------------------------------------------------
