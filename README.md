@@ -52,6 +52,9 @@ small productivity features:
   Manager and Services.
 - **Auto hide.** The dock can hide itself and reappear when you move the mouse to the
   bottom of the screen, like the Windows taskbar.
+- **Dock themes.** Pick Default, WaterGlass, or DarkGlass from the gear menu to change
+  how icons look, a translucent glass tile behind each one in blue or near black. The
+  change applies instantly and is remembered for next time.
 - **Remote Desktop aware.** The dock stays off a Remote Desktop session entirely: it
   hides itself when your PC is being viewed remotely, and also hides on the PC you are
   viewing from so it never overlaps a Remote Desktop window.

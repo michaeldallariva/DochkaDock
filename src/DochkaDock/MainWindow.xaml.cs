@@ -1475,6 +1475,9 @@ public partial class MainWindow : Window
 
         foreach (var languageItem in LanguageMenuItems)
             languageItem.IsChecked = Equals(languageItem.Tag, _config.Language);
+
+        foreach (var themeItem in ThemeMenuItems)
+            themeItem.IsChecked = Equals(themeItem.Tag, _config.Theme);
     }
 
     private IEnumerable<MenuItem> LanguageMenuItems =>
@@ -1486,6 +1489,18 @@ public partial class MainWindow : Window
 
         _config.Language = code;
         LocalizationService.Instance.SetLanguage(code);
+        SaveConfig();
+    }
+
+    private IEnumerable<MenuItem> ThemeMenuItems => new[] { Theme_Default, Theme_WaterGlass, Theme_DarkGlass };
+
+    private void SetTheme_Click(object sender, RoutedEventArgs e)
+    {
+        if ((sender as MenuItem)?.Tag is not string themeName) return;
+
+        var theme = ThemeService.Parse(themeName);
+        _config.Theme = theme.ToString();
+        ThemeService.Instance.SetTheme(theme);
         SaveConfig();
     }
 

@@ -30,7 +30,9 @@ public partial class App : Application
 
         // Before the window exists, so the very first paint is already in
         // the saved language instead of flashing English then switching.
-        LocalizationService.Instance.SetLanguage(new ConfigService().Load().Language);
+        var startupConfig = new ConfigService().Load();
+        LocalizationService.Instance.SetLanguage(startupConfig.Language);
+        ThemeService.Instance.SetTheme(ThemeService.Parse(startupConfig.Theme));
 
         _mainWindow = new MainWindow();
         _mainWindow.Show();

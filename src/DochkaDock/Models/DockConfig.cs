@@ -46,5 +46,6 @@ public sealed class DockConfig
     public double MagnifyScale { get; set; } = 1.8;
     public bool AutoHideEnabled { get; set; } = false;
     public string Language { get; set; } = "en";
+    public string Theme { get; set; } = "Default";
     public List<DockItemData> Items { get; set; } = new();
 }
