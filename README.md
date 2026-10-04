@@ -4,6 +4,8 @@
   <img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue" alt="License: PolyForm Noncommercial 1.0.0">
 </p>
 
+<img width="1997" height="684" alt="Image" src="https://github.com/user-attachments/assets/b746e2a2-1ea8-48d0-ad29-938a7880d9bb" />
+
 <img width="1429" height="884" alt="Image" src="https://github.com/user-attachments/assets/e0385ec6-4927-4aea-b2d5-4671243f2313" />
 
 <img width="1352" height="346" alt="Image" src="https://github.com/user-attachments/assets/385a61ac-6832-4158-b536-628960be1833" />
