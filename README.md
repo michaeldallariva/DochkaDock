@@ -60,9 +60,10 @@ small productivity features:
   viewing from so it never overlaps a Remote Desktop window.
 - **Recycle Bin icon.** Drop a file on it to send it to the Recycle Bin (recoverable,
   not a permanent delete).
-- **12 languages.** English, French, German, Dutch, Italian, Spanish, Portuguese,
-  Simplified Chinese, Traditional Chinese, Russian, Japanese and Korean, switchable
-  from the tray menu.
+- **23 languages.** English, French, German, Dutch, Italian, Spanish, Portuguese,
+  Russian, Polish, Romanian, Lithuanian, Latvian, Estonian, Swedish, Finnish,
+  Norwegian, Simplified Chinese, Japanese, Korean, Hindi, Hebrew, Arabic and Persian
+  (Farsi), switchable from the tray menu.
 
 To keep the dock usable, pinned items are capped at 20 icons in total, and workspaces
 are capped at 5.
@@ -150,6 +151,9 @@ small, easy to inspect, and free of anything unrelated to what it actually does.
   information comes from the running app itself.
 - Media controls only work for apps that register themselves with Windows as a media
   source. Not every app does this.
+- Hebrew, Arabic and Persian are translated, but the menus are not mirrored for
+  right-to-left reading. Text displays correctly, but layout, alignment and submenu
+  direction stay left-to-right.
 
 ## Privacy
 

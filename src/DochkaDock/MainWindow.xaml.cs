@@ -1535,7 +1535,12 @@ public partial class MainWindow : Window
     }
 
     private IEnumerable<MenuItem> LanguageMenuItems =>
-        new[] { Lang_en, Lang_fr, Lang_de, Lang_nl, Lang_it, Lang_es, Lang_pt, Lang_ru, Lang_zh, Lang_zhHant, Lang_ja, Lang_ko };
+        new[]
+        {
+            Lang_en, Lang_fr, Lang_de, Lang_nl, Lang_it, Lang_es, Lang_pt, Lang_ru,
+            Lang_pl, Lang_ro, Lang_lt, Lang_lv, Lang_et, Lang_sv, Lang_fi, Lang_no,
+            Lang_zh, Lang_ja, Lang_ko, Lang_hi, Lang_he, Lang_ar, Lang_fa,
+        };
 
     private void SetLanguage_Click(object sender, RoutedEventArgs e)
     {

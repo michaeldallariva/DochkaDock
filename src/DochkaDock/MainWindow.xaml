@@ -746,10 +746,21 @@
                         <MenuItem x:Name="Lang_es" Header="Español" Tag="es" IsCheckable="True" Click="SetLanguage_Click"/>
                         <MenuItem x:Name="Lang_pt" Header="Português" Tag="pt" IsCheckable="True" Click="SetLanguage_Click"/>
                         <MenuItem x:Name="Lang_ru" Header="Русский" Tag="ru" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_pl" Header="Polski" Tag="pl" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_ro" Header="Română" Tag="ro" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_lt" Header="Lietuvių" Tag="lt" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_lv" Header="Latviešu" Tag="lv" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_et" Header="Eesti" Tag="et" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_sv" Header="Svenska" Tag="sv" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_fi" Header="Suomi" Tag="fi" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_no" Header="Norsk" Tag="no" IsCheckable="True" Click="SetLanguage_Click"/>
                         <MenuItem x:Name="Lang_zh" Header="简体中文" Tag="zh" IsCheckable="True" Click="SetLanguage_Click"/>
-                        <MenuItem x:Name="Lang_zhHant" Header="繁體中文" Tag="zh-Hant" IsCheckable="True" Click="SetLanguage_Click"/>
                         <MenuItem x:Name="Lang_ja" Header="日本語" Tag="ja" IsCheckable="True" Click="SetLanguage_Click"/>
                         <MenuItem x:Name="Lang_ko" Header="한국어" Tag="ko" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_hi" Header="हिन्दी" Tag="hi" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_he" Header="עברית" Tag="he" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_ar" Header="العربية" Tag="ar" IsCheckable="True" Click="SetLanguage_Click"/>
+                        <MenuItem x:Name="Lang_fa" Header="فارسی" Tag="fa" IsCheckable="True" Click="SetLanguage_Click"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="{loc:Loc Key=Options_AboutDochkaDock}" Click="About_Click">
