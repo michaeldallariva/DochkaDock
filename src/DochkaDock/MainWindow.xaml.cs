@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -318,7 +319,7 @@ public partial class MainWindow : Window
 
     private void RepositionWindow()
     {
-        var workArea = SystemParameters.WorkArea;
+        var workArea = GetWorkAreaInDips();
         Left = workArea.Left + (workArea.Width - ActualWidth) / 2;
         // The pill sits flush against the window's bottom edge (no bottom
         // margin), with the window's extra height reserved above it purely
@@ -332,7 +333,43 @@ public partial class MainWindow : Window
 
     // Shared by RepositionWindow and the auto-hide slide so the "resting"
     // formula only lives in one place.
-    private double RestingTop => SystemParameters.WorkArea.Bottom - VerticalGap - ActualHeight;
+    private double RestingTop => GetWorkAreaInDips().Bottom - VerticalGap - ActualHeight;
+
+    /// <summary>The dock's own monitor's work area, converted to WPF DIPs
+    /// using this window's actual current DPI scale — deliberately not
+    /// SystemParameters.WorkArea, which has a long-standing WPF bug: it's
+    /// computed once using whichever monitor's DPI was active when the
+    /// SystemParameters static class was first touched in the process, and
+    /// never refreshes after that. That's invisible as long as you stay on
+    /// one monitor at one scaling, but confirmed to visibly off-center the
+    /// dock after switching from a 2K display to a 1080p one (different
+    /// resolution/scaling) without relaunching — the window still centered
+    /// against the stale, wrong-DPI work area. MonitorFromWindow +
+    /// GetMonitorInfo (device pixels) + VisualTreeHelper.GetDpi (this
+    /// window's live, per-monitor DPI, correct under the app's
+    /// PerMonitorV2 manifest) are always current for whichever monitor the
+    /// dock is actually on. Falls back to SystemParameters.WorkArea only if
+    /// the native window handle doesn't exist yet (shouldn't happen by the
+    /// time this is called, but cheap to guard).</summary>
+    private Rect GetWorkAreaInDips()
+    {
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero)
+            return SystemParameters.WorkArea;
+
+        var monitor = NativeMethods.MonitorFromWindow(hwnd, NativeMethods.MONITOR_DEFAULTTONEAREST);
+        var info = new NativeMethods.MONITORINFOEX { cbSize = Marshal.SizeOf<NativeMethods.MONITORINFOEX>() };
+        if (!NativeMethods.GetMonitorInfo(monitor, ref info))
+            return SystemParameters.WorkArea;
+
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var work = info.rcWork;
+        return new Rect(
+            work.Left / dpi.DpiScaleX,
+            work.Top / dpi.DpiScaleY,
+            (work.Right - work.Left) / dpi.DpiScaleX,
+            (work.Bottom - work.Top) / dpi.DpiScaleY);
+    }
 
     // ---- Auto-hide -------------------------------------------------------
 
