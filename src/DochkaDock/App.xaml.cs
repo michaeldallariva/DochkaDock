@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
@@ -60,6 +61,54 @@ public partial class App : Application
         }
 
         e.Handled = true;
+    }
+
+    // Relaunches a fresh process before tearing this one down. Useful when
+    // switching an RDP session between host and remote leaves the dock
+    // rendered cut-off - a plain restart fixes it without the user having
+    // to find and relaunch the exe manually. The single-instance mutex is
+    // released (and nulled so OnExit doesn't double-release it) before the
+    // new process starts, so it doesn't see this instance still holding it
+    // and immediately shut itself down.
+    public void RestartApplication()
+    {
+        try
+        {
+            _tray?.Dispose();
+        }
+        catch
+        {
+            // Best effort - we're restarting regardless.
+        }
+        _tray = null;
+
+        if (_singleInstanceMutex is not null)
+        {
+            try
+            {
+                _singleInstanceMutex.ReleaseMutex();
+            }
+            catch
+            {
+                // Best effort - we're restarting regardless.
+            }
+            _singleInstanceMutex = null;
+        }
+
+        var exePath = Environment.ProcessPath;
+        if (!string.IsNullOrEmpty(exePath))
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(exePath) { UseShellExecute = true });
+            }
+            catch
+            {
+                // Best effort only - if this fails the user can still relaunch manually.
+            }
+        }
+
+        Shutdown();
     }
 
     protected override void OnExit(ExitEventArgs e)

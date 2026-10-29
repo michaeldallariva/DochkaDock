@@ -48,6 +48,7 @@
   "Options_OpenServices": "Avaa Palvelut",
   "Options_Language": "Kieli",
   "Options_AboutDochkaDock": "Tietoja DochkaDockista",
+  "Options_RestartDochkaDock": "Käynnistä DochkaDock uudelleen",
   "Options_Exit": "Lopeta",
 
   "Common_CouldntOpenFile": "Pudotettua tiedostoa ei voitu avata sovelluksella \"{0}\".",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "Sekä nimi että komento vaaditaan.",
 
   "About_Title": "Tietoja DochkaDockista",
-  "About_Version": "Versio 0.96",
+  "About_Version": "Versio 0.97",
   "About_By": "tekijä Michael DALLA RIVA",
   "About_LicensePrefix": "Lisensoitu: ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

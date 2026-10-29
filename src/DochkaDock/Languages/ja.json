@@ -48,6 +48,7 @@
   "Options_OpenServices": "サービスを開く",
   "Options_Language": "言語",
   "Options_AboutDochkaDock": "DochkaDockについて",
+  "Options_RestartDochkaDock": "DochkaDockを再起動",
   "Options_Exit": "終了",
 
   "Common_CouldntOpenFile": "ドロップされたファイルを\"{0}\"で開けませんでした。",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "名前とコマンドの両方が必要です。",
 
   "About_Title": "DochkaDockについて",
-  "About_Version": "バージョン 0.96",
+  "About_Version": "バージョン 0.97",
   "About_By": "作者: Michael DALLA RIVA",
   "About_LicensePrefix": "ライセンス: ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

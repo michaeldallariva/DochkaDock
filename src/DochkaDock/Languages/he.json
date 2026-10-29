@@ -48,6 +48,7 @@
   "Options_OpenServices": "פתח שירותים",
   "Options_Language": "שפה",
   "Options_AboutDochkaDock": "אודות DochkaDock",
+  "Options_RestartDochkaDock": "הפעל מחדש את DochkaDock",
   "Options_Exit": "יציאה",
 
   "Common_CouldntOpenFile": "לא ניתן היה לפתוח את הקובץ שנגרר באמצעות \"{0}\".",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "יש למלא גם שם וגם פקודה.",
 
   "About_Title": "אודות DochkaDock",
-  "About_Version": "גרסה 0.96",
+  "About_Version": "גרסה 0.97",
   "About_By": "מאת Michael DALLA RIVA",
   "About_LicensePrefix": "ברישיון ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

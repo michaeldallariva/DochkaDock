@@ -48,6 +48,7 @@
   "Options_OpenServices": "Atverti tarnybas",
   "Options_Language": "Kalba",
   "Options_AboutDochkaDock": "Apie DochkaDock",
+  "Options_RestartDochkaDock": "Paleisti iš naujo DochkaDock",
   "Options_Exit": "Išeiti",
 
   "Common_CouldntOpenFile": "Nepavyko atverti numesto failo su „{0}“.",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "Būtini ir pavadinimas, ir komanda.",
 
   "About_Title": "Apie DochkaDock",
-  "About_Version": "Versija 0.96",
+  "About_Version": "Versija 0.97",
   "About_By": "sukūrė Michael DALLA RIVA",
   "About_LicensePrefix": "Licencijuota pagal ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

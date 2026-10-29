@@ -48,6 +48,7 @@
   "Options_OpenServices": "सेवाएं खोलें",
   "Options_Language": "भाषा",
   "Options_AboutDochkaDock": "DochkaDock के बारे में",
+  "Options_RestartDochkaDock": "DochkaDock पुनः आरंभ करें",
   "Options_Exit": "बाहर निकलें",
 
   "Common_CouldntOpenFile": "छोड़ी गई फ़ाइल को \"{0}\" से नहीं खोला जा सका।",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "नाम और कमांड दोनों आवश्यक हैं।",
 
   "About_Title": "DochkaDock के बारे में",
-  "About_Version": "संस्करण 0.96",
+  "About_Version": "संस्करण 0.97",
   "About_By": "Michael DALLA RIVA द्वारा",
   "About_LicensePrefix": "इसके अंतर्गत लाइसेंस प्राप्त: ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

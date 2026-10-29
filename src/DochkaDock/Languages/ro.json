@@ -48,6 +48,7 @@
   "Options_OpenServices": "Deschide Servicii",
   "Options_Language": "Limbă",
   "Options_AboutDochkaDock": "Despre DochkaDock",
+  "Options_RestartDochkaDock": "Repornește DochkaDock",
   "Options_Exit": "Ieșire",
 
   "Common_CouldntOpenFile": "Fișierul plasat nu a putut fi deschis cu \"{0}\".",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "Numele și comanda sunt obligatorii.",
 
   "About_Title": "Despre DochkaDock",
-  "About_Version": "Versiunea 0.96",
+  "About_Version": "Versiunea 0.97",
   "About_By": "de Michael DALLA RIVA",
   "About_LicensePrefix": "Licențiat sub ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

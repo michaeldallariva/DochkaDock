@@ -48,6 +48,7 @@
   "Options_OpenServices": "Ava talitused",
   "Options_Language": "Keel",
   "Options_AboutDochkaDock": "DochkaDocki teave",
+  "Options_RestartDochkaDock": "Taaskäivita DochkaDock",
   "Options_Exit": "Välju",
 
   "Common_CouldntOpenFile": "Lohistatud faili ei õnnestunud avada rakendusega \"{0}\".",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "Nii nimi kui käsk on kohustuslikud.",
 
   "About_Title": "DochkaDocki teave",
-  "About_Version": "Versioon 0.96",
+  "About_Version": "Versioon 0.97",
   "About_By": "autor Michael DALLA RIVA",
   "About_LicensePrefix": "Litsentsitud: ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

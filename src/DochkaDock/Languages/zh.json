@@ -48,6 +48,7 @@
   "Options_OpenServices": "打开服务",
   "Options_Language": "语言",
   "Options_AboutDochkaDock": "关于 DochkaDock",
+  "Options_RestartDochkaDock": "重启 DochkaDock",
   "Options_Exit": "退出",
 
   "Common_CouldntOpenFile": "无法用\"{0}\"打开拖放的文件。",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "名称和命令均为必填项。",
 
   "About_Title": "关于 DochkaDock",
-  "About_Version": "版本 0.96",
+  "About_Version": "版本 0.97",
   "About_By": "作者：Michael DALLA RIVA",
   "About_LicensePrefix": "基于以下许可证发布：",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

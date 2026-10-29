@@ -48,6 +48,7 @@
   "Options_OpenServices": "فتح الخدمات",
   "Options_Language": "اللغة",
   "Options_AboutDochkaDock": "حول DochkaDock",
+  "Options_RestartDochkaDock": "إعادة تشغيل DochkaDock",
   "Options_Exit": "خروج",
 
   "Common_CouldntOpenFile": "تعذر فتح الملف الذي تم إسقاطه باستخدام \"{0}\".",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "الاسم والأمر مطلوبان كلاهما.",
 
   "About_Title": "حول DochkaDock",
-  "About_Version": "الإصدار 0.96",
+  "About_Version": "الإصدار 0.97",
   "About_By": "بواسطة Michael DALLA RIVA",
   "About_LicensePrefix": "مرخص بموجب ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

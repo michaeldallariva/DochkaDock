@@ -25,6 +25,7 @@ public sealed class TrayIconManager : IDisposable
     private const int CMD_AUTOSTART = 1006;
     private const int CMD_OPEN_CONFIG = 1007;
     private const int CMD_ABOUT = 1009;
+    private const int CMD_RESTART_APP = 1010;
     private const int CMD_EXIT = 1008;
 
     private readonly MainWindow _window;
@@ -102,6 +103,7 @@ public sealed class TrayIconManager : IDisposable
             AppendMenu(menu, MF_SEPARATOR, UIntPtr.Zero, null);
             AppendMenu(menu, MF_STRING, (UIntPtr)CMD_ABOUT, loc["Options_AboutDochkaDock"]);
             AppendMenu(menu, MF_SEPARATOR, UIntPtr.Zero, null);
+            AppendMenu(menu, MF_STRING, (UIntPtr)CMD_RESTART_APP, loc["Options_RestartDochkaDock"]);
             AppendMenu(menu, MF_STRING, (UIntPtr)CMD_EXIT, loc["Options_Exit"]);
 
             // Required so the menu reliably dismisses on an outside click.
@@ -151,6 +153,9 @@ public sealed class TrayIconManager : IDisposable
                 break;
             case CMD_ABOUT:
                 new AboutWindow { ShowInTaskbar = true }.Show();
+                break;
+            case CMD_RESTART_APP:
+                ((App)Application.Current).RestartApplication();
                 break;
             case CMD_EXIT:
                 Application.Current.Shutdown();

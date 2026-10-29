@@ -48,6 +48,7 @@
   "Options_OpenServices": "Dienste öffnen",
   "Options_Language": "Sprache",
   "Options_AboutDochkaDock": "Über DochkaDock",
+  "Options_RestartDochkaDock": "DochkaDock neu starten",
   "Options_Exit": "Beenden",
 
   "Common_CouldntOpenFile": "Die abgelegte Datei konnte nicht mit \"{0}\" geöffnet werden.",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "Name und Befehl sind beide erforderlich.",
 
   "About_Title": "Über DochkaDock",
-  "About_Version": "Version 0.96",
+  "About_Version": "Version 0.97",
   "About_By": "von Michael DALLA RIVA",
   "About_LicensePrefix": "Lizenziert unter der ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

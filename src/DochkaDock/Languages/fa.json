@@ -48,6 +48,7 @@
   "Options_OpenServices": "باز کردن خدمات",
   "Options_Language": "زبان",
   "Options_AboutDochkaDock": "درباره DochkaDock",
+  "Options_RestartDochkaDock": "راه‌اندازی مجدد DochkaDock",
   "Options_Exit": "خروج",
 
   "Common_CouldntOpenFile": "فایل رها شده با \"{0}\" باز نشد.",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "هم نام و هم دستور لازم است.",
 
   "About_Title": "درباره DochkaDock",
-  "About_Version": "نسخه 0.96",
+  "About_Version": "نسخه 0.97",
   "About_By": "اثر Michael DALLA RIVA",
   "About_LicensePrefix": "دارای مجوز تحت ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",

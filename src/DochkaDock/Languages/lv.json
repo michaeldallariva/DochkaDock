@@ -48,6 +48,7 @@
   "Options_OpenServices": "Atvērt pakalpojumus",
   "Options_Language": "Valoda",
   "Options_AboutDochkaDock": "Par DochkaDock",
+  "Options_RestartDochkaDock": "Restartēt DochkaDock",
   "Options_Exit": "Iziet",
 
   "Common_CouldntOpenFile": "Neizdevās atvērt nomesto failu ar \"{0}\".",
@@ -92,7 +93,7 @@
   "DropAction_ValidationMessage": "Nepieciešams gan nosaukums, gan komanda.",
 
   "About_Title": "Par DochkaDock",
-  "About_Version": "Versija 0.96",
+  "About_Version": "Versija 0.97",
   "About_By": "autors Michael DALLA RIVA",
   "About_LicensePrefix": "Licencēts saskaņā ar ",
   "About_LicenseName": "PolyForm Noncommercial License 1.0.0",
